@@ -10,9 +10,9 @@ const addMovieBtn = document.querySelector("header button");
 const add = document.querySelector('#add-modal .btn--success');
 const cancelBtn = document.querySelector(" #add-modal .btn--passive");
 const backdrop = document.getElementById('backdrop');
-const title = document.getElementById('title').value;
-const url = document.getElementById('image-url').value;
-const rating = document.getElementById('rating').value;
+const entryText = document.getElementById('entry-text');
+const movieUL = document.getElementById('movie-list');
+
 const movieList = [];
 
 addMovieBtn.addEventListener("click", () =>  {
@@ -34,26 +34,53 @@ function cancel(){
     backdrop.classList.remove('visible'); 
 }
 
-add.addEventListener("click", () => {
-    if (title === '' || url === '' || rating < 1 || rating > 5){
-        alert('Enter valid values');
+function clear() {
+    document.getElementById('title').value = '';
+    document.getElementById('image-url').value = '';
+    document.getElementById('rating').value ='';
+}
+
+function removeSection(){
+    if (movieList.length === 0){
+        entryText.style.display ='block'
     } else {
+        entryText.style.display ='none'
+    }
+}
+
+const displayMovieList = (movieObj) => {
+    const movieLi = document.createElement("li");
+    movieLi.className = 'movie-element';
+    movieLi.innerHTML = `
+    <div class = 'movie-element__image'> 
+         <img src="${movieObj.imageURL}" alt=""> 
+    </div>
+    <div class = 'movie-element__info'>
+         <h2>${movieObj.movieTitle}</h2> 
+        <p>${movieObj.yourRating}</p>
+    </div>
+    `;
+    movieUL.append(movieLi);
+}
+
+add.addEventListener("click", () => {
+    const title = document.getElementById('title').value;
+    const url = document.getElementById('image-url').value;
+    const rating = document.getElementById('rating').valueAsNumber;
+
+    if (title.trim() === '' || url.trim() === '' || isNaN(rating) || rating < 1 || rating > 5){
+        alert('Enter valid values');
+        return;
+    } 
         let movie = {
            movieTitle: title,
             imageURL: url,
             yourRating: rating
         }
         movieList.push(movie);
-        clear();
-        console.log(movie)
-    } 
-     
+        cancel();
+        removeSection();
+        displayMovieList(movie);
 })  
 
-
-function clear() {
-    document.getElementById('title').value === '';
-    document.getElementById('image-url').value === '';
-    document.getElementById('rating').value === '';
-}
 }
